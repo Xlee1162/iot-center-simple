@@ -11,6 +11,7 @@ import DeviceControl from "./pages/DeviceControl";
 import ConnectionStatus from "./pages/ConnectionStatus";
 import MqttInterface from "./pages/MqttInterface";
 import FotaManagement from "./pages/FotaManagement";
+import DeviceSensorMapping from "./pages/DeviceSensorMapping";
 import MasterConfig from "./pages/MasterConfig";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/status" element={<ConnectionStatus />} />
             <Route path="/mqtt" element={<MqttInterface />} />
             <Route path="/fota" element={<FotaManagement />} />
+            <Route path="/device-config" element={<DeviceSensorMapping />} />
             <Route path="/config" element={<MasterConfig />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

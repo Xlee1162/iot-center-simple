@@ -23,16 +23,17 @@ import {
 const items = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Maps", url: "/maps", icon: Map },
-  { title: "Device List", url: "/devices", icon: LayoutDashboard },
+  { title: "Equipment View", url: "/devices", icon: LayoutDashboard },
   { title: "Device Control", url: "/control", icon: Sliders },
   { title: "Connection Status", url: "/status", icon: Wifi },
   { title: "MQTT Interface", url: "/mqtt", icon: Radio },
   { title: "FOTA Management", url: "/fota", icon: Upload },
+  { title: "Device-Sensor Mapping", url: "/device-config", icon: Settings },
   { title: "Master Config", url: "/config", icon: Settings },
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, setOpen } = useSidebar();
   const location = useLocation();
 
   const getNavCls = (path: string) => {
@@ -42,9 +43,23 @@ export function AppSidebar() {
       : "hover:bg-sidebar-accent/50 text-sidebar-foreground";
   };
 
+  const handleDoubleClick = () => {
+    setOpen(false);
+  };
+
   return (
-    <Sidebar className="border-r border-sidebar-border">
-      <SidebarContent>
+    <Sidebar className="border-r border-sidebar-border relative">
+      {/* Floating toggle button when collapsed */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 h-10 w-10 rounded-full bg-sidebar-accent hover:bg-sidebar-accent/80 flex items-center justify-center transition-all duration-300 shadow-lg"
+          aria-label="Open sidebar"
+        >
+          <Radio className="h-5 w-5 text-sidebar-foreground" />
+        </button>
+      )}
+      <SidebarContent onDoubleClick={handleDoubleClick} className="cursor-pointer">
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center">
