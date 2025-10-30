@@ -6,6 +6,7 @@ import {
   Radio,
   Upload,
   Settings,
+  Map,
 } from "lucide-react";
 import {
   Sidebar,
@@ -21,6 +22,8 @@ import {
 
 const items = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Maps", url: "/maps", icon: Map },
+  { title: "Device List", url: "/devices", icon: LayoutDashboard },
   { title: "Device Control", url: "/control", icon: Sliders },
   { title: "Connection Status", url: "/status", icon: Wifi },
   { title: "MQTT Interface", url: "/mqtt", icon: Radio },
