@@ -27,7 +27,7 @@ const SENSOR_TYPES = [
 ];
 
 // Zones for Floor 1
-const ZONES = ["CFA", "ACT", "COB"];
+const ZONES = ["Zone1", "Zone2", "Zone3"];
 
 interface PlacedSensor {
   id: string;
