@@ -7,6 +7,8 @@ import {
   Upload,
   Settings,
   Map,
+  ChevronDown,
+  Cable
 } from "lucide-react";
 import {
   Sidebar,
@@ -18,9 +20,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "./ui/sidebar"; // Changed path
+import { cn } from "@/lib/utils";
+import React from "react";
 
-const items = [
+const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Maps View", url: "/maps", icon: Map },
   { title: "Equipment View", url: "/devices", icon: LayoutDashboard },
@@ -28,15 +32,40 @@ const items = [
   { title: "Connection Status", url: "/status", icon: Wifi },
   { title: "MQTT Interface", url: "/mqtt", icon: Radio },
   { title: "FOTA Management", url: "/fota", icon: Upload },
-  { title: "Master Config", url: "/master-config/device-sensor-mapping", icon: Settings },
+];
+
+const masterConfigItems = [
+    {
+        title: 'Device & Sensor',
+        url: '/master-config/device-sensor-mapping',
+        icon: Cable,
+    },
+    {
+        title: 'Maps Config',
+        url: '/master-config/maps-config',
+        icon: Map,
+    },
+    {
+        title: 'Dashboard Layout',
+        url: '/master-config/dashboard-layout',
+        icon: LayoutDashboard,
+    },
+    {
+        title: 'System Settings',
+        url: '/master-config/system-settings',
+        icon: Settings,
+    },
 ];
 
 export function AppSidebar() {
   const { open, setOpen } = useSidebar();
   const location = useLocation();
+  const isMasterConfig = location.pathname.startsWith("/master-config");
 
-  const getNavCls = (path: string) => {
-    const isActive = location.pathname === path;
+  const getNavCls = (path: string, isExact: boolean = true) => {
+    const isActive = isExact 
+      ? location.pathname === path
+      : location.pathname.startsWith(path);
     return isActive
       ? "bg-sidebar-accent text-sidebar-primary font-medium"
       : "hover:bg-sidebar-accent/50 text-sidebar-foreground";
@@ -49,7 +78,6 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-sidebar-border">
       <SidebarContent onDoubleClick={handleDoubleClick} className="cursor-pointer relative">
-        {/* Floating toggle button when collapsed */}
         {!open && (
           <button
             onClick={() => setOpen(true)}
@@ -77,16 +105,39 @@ export function AppSidebar() {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink to={item.url} end className={getNavCls(item.url)}>
+                    <NavLink to={item.url} className={getNavCls(item.url)}>
                       <item.icon className="h-4 w-4" />
                       {open && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {/* Master Config Tree */}
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  className={cn("justify-between", getNavCls("/master-config", false))}
+                >
+                  <div className="flex items-center gap-3">
+                      <Settings className="h-4 w-4" />
+                      {open && <span>Master Config</span>}
+                  </div>
+                  {open && <ChevronDown className={cn("h-4 w-4 transition-transform", isMasterConfig && "rotate-180")} />}
+                </SidebarMenuButton>
+                {open && isMasterConfig && (
+                    <div className="pl-8 pr-4 py-2 space-y-2">
+                        {masterConfigItems.map(subItem => (
+                            <NavLink key={subItem.url} to={subItem.url} className={cn("flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground", getNavCls(subItem.url))}>
+                                <subItem.icon className="h-4 w-4"/>
+                                {subItem.title}
+                            </NavLink>
+                        ))}
+                    </div>
+                )}
+              </SidebarMenuItem>
+
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
