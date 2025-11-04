@@ -20,9 +20,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "./ui/sidebar"; // Changed path
+} from "./ui/sidebar"; 
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -60,7 +60,16 @@ const masterConfigItems = [
 export function AppSidebar() {
   const { open, setOpen } = useSidebar();
   const location = useLocation();
-  const isMasterConfig = location.pathname.startsWith("/master-config");
+  const isCurrentlyOnMasterConfig = location.pathname.startsWith("/master-config");
+
+  const [isMasterConfigOpen, setMasterConfigOpen] = useState(isCurrentlyOnMasterConfig);
+
+  useEffect(() => {
+    if (isCurrentlyOnMasterConfig) {
+      setMasterConfigOpen(true);
+    }
+  }, [isCurrentlyOnMasterConfig]);
+
 
   const getNavCls = (path: string, isExact: boolean = true) => {
     const isActive = isExact 
@@ -74,6 +83,10 @@ export function AppSidebar() {
   const handleDoubleClick = () => {
     setOpen(false);
   };
+
+  const toggleMasterConfig = () => {
+      setMasterConfigOpen(!isMasterConfigOpen);
+  }
 
   return (
     <Sidebar className="border-r border-sidebar-border">
@@ -108,7 +121,7 @@ export function AppSidebar() {
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavCls(item.url)}>
+                    <NavLink to={item.url} end className={getNavCls(item.url)}>
                       <item.icon className="h-4 w-4" />
                       {open && <span>{item.title}</span>}
                     </NavLink>
@@ -117,19 +130,20 @@ export function AppSidebar() {
               ))}
               {/* Master Config Tree */}
               <SidebarMenuItem>
-                <SidebarMenuButton 
+                <SidebarMenuButton
+                  onClick={toggleMasterConfig}
                   className={cn("justify-between", getNavCls("/master-config", false))}
                 >
                   <div className="flex items-center gap-3">
                       <Settings className="h-4 w-4" />
                       {open && <span>Master Config</span>}
                   </div>
-                  {open && <ChevronDown className={cn("h-4 w-4 transition-transform", isMasterConfig && "rotate-180")} />}
+                  {open && <ChevronDown className={cn("h-4 w-4 transition-transform", isMasterConfigOpen && "rotate-180")} />}
                 </SidebarMenuButton>
-                {open && isMasterConfig && (
+                {open && isMasterConfigOpen && (
                     <div className="pl-8 pr-4 py-2 space-y-2">
                         {masterConfigItems.map(subItem => (
-                            <NavLink key={subItem.url} to={subItem.url} className={cn("flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground", getNavCls(subItem.url))}>
+                            <NavLink key={subItem.url} to={subItem.url} className={cn("flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground", getNavCls(subItem.url, true))}>
                                 <subItem.icon className="h-4 w-4"/>
                                 {subItem.title}
                             </NavLink>
